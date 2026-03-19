@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { flushSync } from "react-dom";
 import "./SearchReplaceControl.css";
 
 export default function SearchReplace({ setTextParts, setHistory, textParts }) {
@@ -7,6 +8,8 @@ export default function SearchReplace({ setTextParts, setHistory, textParts }) {
   const [showSearch, setShowSearch] = useState(false);
   const [showReplace, setShowReplace] = useState(false);
   const [searchResults, setSearchResults] = useState("");
+  const countRef = useRef(0);
+  const didRunRef = useRef(false);
 
   const buildEscapedRegex = (text) => {
     const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -45,31 +48,51 @@ export default function SearchReplace({ setTextParts, setHistory, textParts }) {
     });
   };
 
+  const mergeAndClean = (parts) => {
+    const merged = [];
+    parts.forEach((part) => {
+      const style = part.style?.backgroundColor === "yellow"
+        ? { ...part.style, backgroundColor: undefined }
+        : part.style;
+      const last = merged[merged.length - 1];
+      if (last && JSON.stringify(last.style) === JSON.stringify(style)) {
+        last.text += part.text;
+      } else {
+        merged.push({ text: part.text, style });
+      }
+    });
+    return merged;
+  };
+
   const handleSearch = () => {
     if (!searchText) return;
-
     const regex = buildEscapedRegex(searchText);
+    countRef.current = 0;
+    didRunRef.current = false;
 
-    // Count matches directly on current textParts - outside any updater
-    let totalMatches = 0;
-    textParts.forEach((part) => {
-      const localRegex = new RegExp(regex.source, "gi");
-      totalMatches += (part.text?.match(localRegex) || []).length;
-    });
-
-    setSearchResults(totalMatches > 0 ? `Found ${totalMatches} result(s).` : "No results found.");
-
-    setTextParts((prevParts) => {
-      const newParts = [];
-      prevParts.forEach((part) => {
-        const localRegex = new RegExp(regex.source, "gi");
-        const segments = splitTextWithMatches(part.text, localRegex);
-        segments.forEach((seg) => {
-          newParts.push({ text: seg.text, style: seg.isMatch ? { ...part.style, backgroundColor: "yellow" } : part.style });
+    flushSync(() => {
+      setTextParts((prevParts) => {
+        const merged = mergeAndClean(prevParts);
+        if (!didRunRef.current) {
+          didRunRef.current = true;
+          let total = 0;
+          merged.forEach((part) => {
+            total += (part.text?.match(new RegExp(regex.source, "gi")) || []).length;
+          });
+          countRef.current = total;
+        }
+        const newParts = [];
+        merged.forEach((part) => {
+          const localRegex = new RegExp(regex.source, "gi");
+          splitTextWithMatches(part.text, localRegex).forEach((seg) => {
+            newParts.push({ text: seg.text, style: seg.isMatch ? { ...part.style, backgroundColor: "yellow" } : part.style });
+          });
         });
+        return newParts;
       });
-      return newParts;
     });
+
+    setSearchResults(countRef.current > 0 ? `Found ${countRef.current} result(s).` : "No results found.");
 
     setTimeout(() => {
       clearHighlights();
