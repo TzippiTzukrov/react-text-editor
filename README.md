@@ -114,6 +114,30 @@ src/
 
 ---
 
+## 📸 Screenshots
+
+### Login & Signup
+![Login Screen](screenshots/login.png)
+
+### Text Editor
+![Text Editor](screenshots/editor.png)
+
+### Virtual Keyboard
+![Virtual Keyboard](screenshots/keyboard.png)
+
+---
+
+## 🧠 What I Learned
+
+- Building interactive UI components using React state management
+- Managing complex UI behavior such as live text editing and virtual keyboard interaction
+- Working with localStorage for simple authentication persistence
+- Improving responsive design for both desktop and mobile screens
+- Structuring a medium-sized React project with reusable components
+- Handling user interactions like undo/redo and dynamic styling updates
+
+---
+
 ## 🔮 Future Improvements
 
 - Add server-side authentication instead of `localStorage`
