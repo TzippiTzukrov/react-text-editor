@@ -1,0 +1,3 @@
+V 1. changing color and font and adding imoji 
+V 2. in the entry to the app in responsive screen put the login and signin bix in the center
+V 3. On full screen arange the menu incllude scrolling
