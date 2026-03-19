@@ -116,14 +116,15 @@ src/
 
 ## 📸 Screenshots
 
-### Login & Signup
-![Login Screen](screenshots/login.png)
+| Login | Editor |
+|------|--------|
+| ![](./screenshots/login.png) | ![](./screenshots/editor.png) |
 
-### Text Editor
-![Text Editor](screenshots/editor.png)
+### 📱 Mobile View
 
-### Mobile View
-![Mobile View](screenshots/mobile.png)
+<p align="center">
+  <img src="./screenshots/mobile.png" width="250"/>
+</p>
 
 ---
 
