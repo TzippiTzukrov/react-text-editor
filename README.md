@@ -122,8 +122,8 @@ src/
 ### Text Editor
 ![Text Editor](screenshots/editor.png)
 
-### Virtual Keyboard
-![Virtual Keyboard](screenshots/keyboard.png)
+### Mobile View
+![Mobile View](screenshots/mobile.png)
 
 ---
 
